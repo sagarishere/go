@@ -669,7 +669,12 @@ func ReadFile(name string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			log.Printf("fail to close file %q, error: %q", name, err)
+		}
+	}()
 
 	var size int
 	if info, err := f.Stat(); err == nil {
